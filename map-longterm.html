@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prévisions Long Terme - DisasterScout</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        .longterm-legend { background: rgba(255,255,255,0.95); padding: 15px; border-radius: 10px; }
+        .forecast-tabs { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+        .tab-btn { padding: 10px 20px; border: 2px solid #1e3c72; background: white; border-radius: 25px; cursor: pointer; transition: all 0.3s; }
+        .tab-btn.active { background: #1e3c72; color: white; }
+        .forecast-date { font-weight: bold; color: #ffd700; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-shield-alt"></i>
+                <span>DisasterScout</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html" class="nav-link">Accueil</a></li>
+                <li><a href="news.html" class="nav-link">Actualités</a></li>
+                <li><a href="map.html" class="nav-link">Carte 24h</a></li>
+                <li><a href="map-longterm.html" class="nav-link active">Prévisions 5j</a></li>
+                <li><a href="map-ultralong.html" class="nav-link">Prévisions ultralong terme</a></li>
+            </ul>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <section class="map-hero">
+        <div class="map-controls">
+            <div>
+                <h1><i class="fas fa-calendar-week"></i> Prévisions Long Terme</h1>
+                <p>Risques d'inondation sur 5 jours - Modèle IA avancé</p>
+            </div>
+            
+            <div class="forecast-tabs">
+                <button class="tab-btn active" data-day="0">J+0</button>
+                <button class="tab-btn" data-day="1">J+1</button>
+                <button class="tab-btn" data-day="2">J+2</button>
+                <button class="tab-btn" data-day="3">J+3</button>
+                <button class="tab-btn" data-day="4">J+4</button>
+            </div>
+
+            <div class="longterm-legend">
+                <div class="forecast-date" id="currentDate">Chargement...</div>
+                <div class="legend">
+                    <div class="legend-item low"><span></span> Faible</div>
+                    <div class="legend-item medium"><span></span> Moyen</div>
+                    <div class="legend-item high"><span></span> Élevé</div>
+                    <div class="legend-item critical"><span></span> Critique</div>
+                </div>
+            </div>
+        </div>
+        <div id="map" style="height: 70vh;"></div>
+    </section>
+
+    <section class="map-stats">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3 id="alertCount">0</h3>
+                    <p>Gouvernorats en alerte</p>
+                </div>
+                <div class="stat-card">
+                    <h3>92%</h3>
+                    <p>Fiabilité 5 jours</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="nextUpdate">Prochain update</h3>
+                    <p>Dans 6h</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="trend">Stable</h3>
+                    <p>Tendance risques</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 DisasterScout Tunisie. Prévisions à long terme - Modèle IA propriétaire.</p>
+        </div>
+    </footer>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="map-longterm.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ultra Long - DisasterScout</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" />
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-shield-alt"></i>
+                <span>DisasterScout</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html" class="nav-link">Accueil</a></li>
+                <li><a href="news.html" class="nav-link">Actualités</a></li>
+                <li><a href="map.html" class="nav-link">carte</a></li>
+                <li><a href="map-longterm.html" class="nav-link">prévisions 5j</a></li>
+                <li><a href="map-ultralong.html" class="nav-link active">Ultra Long</a></li>
+            </ul>
+            <div class="hamburger"><span></span><span></span><span></span></div>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="map-hero">
+        <div class="map-controls">
+            <h1>Ultra Long Terme</h1>
+            <div class="legend">
+                <div class="legend-item low"><span></span> Faible</div>
+                <div class="legend-item medium"><span></span> Moyen</div>
+                <div class="legend-item high"><span></span> Élevé</div>
+                <div class="legend-item critical"><span></span> Critique</div>
+            </div>
+        </div>
+        <div id="map" style="height: 70vh;"></div>
+    </section>
+
+    <!-- Stats -->
+    <section class="map-stats">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>3</h3>
+                    <p>En alerte</p>
+                </div>
+                <div class="stat-card">
+                    <h3>90%</h3>
+                    <p>Fiabilité</p>
+                </div>
+                <div class="stat-card">
+                    <h3>J++</h3>
+                    <p>Prévision</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 DisasterScout Tunisie.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+    <script src="https://unpkg.com/pmtiles@3.0.7/dist/pmtiles.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", async function() {
+            const PMTILES_FILE = "./flood_risk.pmtiles";
+            const p = new pmtiles.PMTiles(PMTILES_FILE);
+            const protocol = new pmtiles.Protocol();
+            protocol.add(p);
+            maplibregl.addProtocol("pmtiles", protocol.tile);
+
+            const metadata = await p.getMetadata().catch(() => ({}));
+            const vectorLayers = Array.isArray(metadata.vector_layers) ? metadata.vector_layers : [];
+            const isVector = vectorLayers.length > 0;
+
+            const style = {
+                version: 8,
+                sources: {
+                    osm: {
+                        type: "raster",
+                        tiles: [
+                            "https://a.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                            "https://b.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                            "https://c.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                        ],
+                        tileSize: 256,
+                        attribution: "&copy; OpenStreetMap contributors"
+                    }
+                },
+                layers: [
+                    { id: "osm-base", type: "raster", source: "osm" }
+                ]
+            };
+
+            const map = new maplibregl.Map({
+                container: "map",
+                style,
+                center: [9.5, 34],
+                zoom: 6.5,
+                attributionControl: true
+            });
+
+            map.addControl(new maplibregl.NavigationControl(), "top-right");
+
+            map.on("load", () => {
+                if (isVector) {
+                    map.addSource("pmtiles-risk", {
+                        type: "vector",
+                        url: `pmtiles://${PMTILES_FILE}`
+                    });
+
+                    vectorLayers.forEach((layer) => {
+                        map.addLayer({
+                            id: `risk-vector-${layer.id}`,
+                            type: "fill",
+                            source: "pmtiles-risk",
+                            "source-layer": layer.id,
+                            paint: {
+                                "fill-color": [
+                                    "case",
+                                    [
+                                        "in",
+                                        [
+                                            "downcase",
+                                            [
+                                                "to-string",
+                                                [
+                                                    "coalesce",
+                                                    ["get", "risk"],
+                                                    ["get", "risk_level"],
+                                                    ["get", "severity"],
+                                                    ["get", "class"],
+                                                    ["get", "category"],
+                                                    ["get", "hazard"],
+                                                    ["get", "status"],
+                                                    ""
+                                                ]
+                                            ]
+                                        ],
+                                        ["literal", ["low", "faible", "green", "vert", "1"]]
+                                    ],
+                                    "#2ed573",
+                                    [
+                                        "in",
+                                        [
+                                            "downcase",
+                                            [
+                                                "to-string",
+                                                [
+                                                    "coalesce",
+                                                    ["get", "risk"],
+                                                    ["get", "risk_level"],
+                                                    ["get", "severity"],
+                                                    ["get", "class"],
+                                                    ["get", "category"],
+                                                    ["get", "hazard"],
+                                                    ["get", "status"],
+                                                    ""
+                                                ]
+                                            ]
+                                        ],
+                                        ["literal", ["medium", "moyen", "orange", "2"]]
+                                    ],
+                                    "#ffa502",
+                                    [
+                                        "in",
+                                        [
+                                            "downcase",
+                                            [
+                                                "to-string",
+                                                [
+                                                    "coalesce",
+                                                    ["get", "risk"],
+                                                    ["get", "risk_level"],
+                                                    ["get", "severity"],
+                                                    ["get", "class"],
+                                                    ["get", "category"],
+                                                    ["get", "hazard"],
+                                                    ["get", "status"],
+                                                    ""
+                                                ]
+                                            ]
+                                        ],
+                                        ["literal", ["high", "critical", "eleve", "élevé", "rouge", "red", "3", "4"]]
+                                    ],
+                                    "#ff4757",
+                                    [
+                                        "step",
+                                        [
+                                            "to-number",
+                                            [
+                                                "coalesce",
+                                                ["get", "risk"],
+                                                ["get", "risk_level"],
+                                                ["get", "severity"],
+                                                ["get", "class"],
+                                                ["get", "category"],
+                                                ["get", "hazard"],
+                                                ["get", "value"],
+                                                ["get", "dn"],
+                                                ["get", "gridcode"],
+                                                1
+                                            ]
+                                        ],
+                                        "#2ed573",
+                                        2,
+                                        "#ffa502",
+                                        3,
+                                        "#ff4757"
+                                    ]
+                                ],
+                                "fill-opacity": 0.72,
+                                "fill-outline-color": "rgba(0,0,0,0)"
+                            }
+                        });
+                    });
+                    return;
+                }
+
+                map.addSource("pmtiles-risk", {
+                    type: "raster",
+                    url: `pmtiles://${PMTILES_FILE}`,
+                    tileSize: 256
+                });
+
+                map.addLayer({
+                    id: "risk-raster",
+                    type: "raster",
+                    source: "pmtiles-risk",
+                    paint: {
+                        "raster-opacity": 0.9
+                    }
+                });
+            });
+        });
+    </script>
+    <script src="script.js"></script>
+</body>
+</html>

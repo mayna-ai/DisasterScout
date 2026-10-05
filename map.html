@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carte Interactive - DisasterScout</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+</head>
+<body>
+    <!-- Navigation (identique) -->
+    <nav class="navbar">
+    <div class="nav-container">
+        <div class="nav-logo">
+            <i class="fas fa-shield-alt"></i>
+            <span>DisasterScout</span>
+        </div>
+        <ul class="nav-menu">
+            <li><a href="index.html" class="nav-link">Accueil</a></li>
+            <li><a href="news.html" class="nav-link">Actualités</a></li>
+            <li><a href="map.html" class="nav-link active">Carte</a></li>
+            <li><a href="map-longterm.html" class="nav-link">Prévisions 5j</a></li>
+            <li><a href="map-ultralong.html" class="nav-link">Prévisions ultralong terme</a></li>
+        </ul>
+        <div class="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </div>
+</nav>
+
+    <section class="map-hero">
+        
+        <div class="map-controls">
+            <h1>Carte des Risques</h1>
+            <div class="legend">
+                <div class="legend-item low"><span></span> Faible</div>
+                <div class="legend-item medium"><span></span> Moyen</div>
+                <div class="legend-item high"><span></span> Élevé</div>
+                <div class="legend-item critical"><span></span> Critique</div>
+            </div>
+        </div>
+        <div id="map" style="height: 70vh;"></div>
+    </section>
+
+    <section class="map-stats">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>3</h3>
+                    <p>Gouvernorats en alerte</p>
+                </div>
+                <div class="stat-card">
+                    <h3>87%</h3>
+                    <p>Fiabilité des prédictions</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Prochain update</h3>
+                    <p>Dans 2h30</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 DisasterScout Tunisie. Données mises à jour en temps réel.</p>
+        </div>
+    </footer>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="map.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
